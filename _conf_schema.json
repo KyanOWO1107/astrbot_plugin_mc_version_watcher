@@ -1,0 +1,21 @@
+{
+  "check_interval_minutes": {
+    "description": "Minecraft 版本检查间隔（分钟）",
+    "type": "int",
+    "default": 5,
+    "hint": "最小按 1 分钟处理；默认每 5 分钟检查一次 Mojang 官方版本清单。"
+  },
+  "enabled_version_types": {
+    "description": "需要监测的官方版本类型",
+    "type": "list",
+    "default": ["release", "snapshot"],
+    "options": ["release", "snapshot"],
+    "hint": "Release Candidate 和 Pre-release 按 Mojang 官方规范属于 snapshot，并会在消息中额外标注。"
+  },
+  "push_umos": {
+    "description": "版本更新推送目标 UMO 列表",
+    "type": "list",
+    "default": [],
+    "hint": "每项填写一个完整 UMO，可通过 /mcversion umo 获取当前会话 UMO。"
+  }
+}
