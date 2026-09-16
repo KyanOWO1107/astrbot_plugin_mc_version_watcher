@@ -8,7 +8,7 @@ from main import (
     normalize_plugin_config,
 )
 from mc_version_watcher.models import VersionInfo, VersionManifest
-from tests.conftest import Plain
+from tests.conftest import MessageChain, Plain
 
 
 class FakeEvent:
@@ -57,6 +57,7 @@ def test_non_admin_test_command_is_rejected() -> None:
 
 def test_admin_test_command_uses_service_and_returns_summary() -> None:
     plugin = MinecraftVersionWatcherPlugin.__new__(MinecraftVersionWatcherPlugin)
+    plugin.settings = PluginSettings(5, ("release", "snapshot"), ("target",))
 
     class FakeService:
         async def send_synthetic_test(self):
@@ -72,6 +73,19 @@ def test_admin_test_command_uses_service_and_returns_summary() -> None:
     plugin.service = FakeService()
     result = asyncio.run(collect(plugin.mcversion(FakeEvent(), "test")))
     assert "成功 2" in result[0]
+
+
+def test_admin_test_command_reports_missing_push_targets() -> None:
+    plugin = MinecraftVersionWatcherPlugin.__new__(MinecraftVersionWatcherPlugin)
+    plugin.settings = PluginSettings(5, ("release", "snapshot"), ())
+
+    class FakeService:
+        async def send_synthetic_test(self):
+            raise AssertionError("service should not send without configured targets")
+
+    plugin.service = FakeService()
+    result = asyncio.run(collect(plugin.mcversion(FakeEvent(), "test")))
+    assert "未配置" in result[0]
 
 
 def test_latest_command_uses_injected_client() -> None:
@@ -105,5 +119,6 @@ def test_real_sender_adapter_wraps_text_as_plain_message() -> None:
     plugin.context = FakeContext()
     assert asyncio.run(plugin._send_text("umo", "hello")) is True
     assert calls[0][0] == "umo"
-    assert isinstance(calls[0][1][0], Plain)
-    assert calls[0][1][0].text == "hello"
+    assert isinstance(calls[0][1], MessageChain)
+    assert isinstance(calls[0][1].chain[0], Plain)
+    assert calls[0][1].chain[0].text == "hello"

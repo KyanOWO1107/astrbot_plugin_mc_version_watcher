@@ -10,6 +10,11 @@ class Plain:
         self.text = text
 
 
+class MessageChain:
+    def __init__(self, chain: list[object] | None = None) -> None:
+        self.chain = chain or []
+
+
 class FakeStar:
     def __init__(self, context) -> None:
         self.context = context
@@ -40,6 +45,7 @@ def install_astrbot_stubs(data_dir: Path | None = None) -> None:
         command=lambda _name: lambda function: function,
     )
     modules["astrbot.api.message_components"].Plain = Plain
+    modules["astrbot.api.event"].MessageChain = MessageChain
     modules["astrbot.api.star"].Context = object
     modules["astrbot.api.star"].Star = FakeStar
     modules["astrbot.api.star"].StarTools = types.SimpleNamespace(

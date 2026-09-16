@@ -12,7 +12,7 @@ if not __package__ and str(_PLUGIN_DIR) not in sys.path:
     sys.path.insert(0, str(_PLUGIN_DIR))
 
 from astrbot.api import logger
-from astrbot.api.event import AstrMessageEvent, filter
+from astrbot.api.event import AstrMessageEvent, MessageChain, filter
 from astrbot.api.message_components import Plain
 from astrbot.api.star import Context, Star, StarTools, register
 from astrbot.core.star.filter.command import GreedyStr
@@ -100,7 +100,7 @@ class MinecraftVersionWatcherPlugin(Star):
         self._poll_task: asyncio.Task[None] | None = None
 
     async def _send_text(self, umo: str, text: str) -> bool:
-        return bool(await self.context.send_message(umo, [Plain(text)]))
+        return bool(await self.context.send_message(umo, MessageChain([Plain(text)])))
 
     async def initialize(self) -> None:
         if self._poll_task is not None and not self._poll_task.done():
@@ -148,6 +148,9 @@ class MinecraftVersionWatcherPlugin(Star):
         if command == "test":
             if not event.is_admin():
                 yield event.plain_result("/mcversion test 仅限管理员使用。")
+                return
+            if not self.settings.push_umos:
+                yield event.plain_result("尚未配置任何推送目标 UMO。")
                 return
             result = await self.service.send_synthetic_test()
             yield event.plain_result(

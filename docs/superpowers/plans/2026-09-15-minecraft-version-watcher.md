@@ -4,7 +4,7 @@
 
 **Goal:** Create a dependency-light AstrBot plugin that polls Mojang's official Minecraft version manifest, avoids first-run historical spam, reports the latest release and snapshot independently, and pushes new versions to configured UMO targets.
 
-**Architecture:** Keep Mojang parsing, version classification, state persistence, formatting, and polling orchestration outside AstrBot so they can be tested with in-memory fixtures. main.py will be a thin AstrBot adapter that normalizes configuration, owns the lifecycle task, exposes /mcversion commands, and wraps context.send_message(umo, [Plain(text)]) as the service text sender.
+**Architecture:** Keep Mojang parsing, version classification, state persistence, formatting, and polling orchestration outside AstrBot so they can be tested with in-memory fixtures. main.py will be a thin AstrBot adapter that normalizes configuration, owns the lifecycle task, exposes /mcversion commands, and wraps context.send_message(umo, MessageChain([Plain(text)])) as the service text sender.
 
 **Tech Stack:** Python 3.10+, AstrBot plugin API, Python standard-library urllib.request through asyncio.to_thread, JSON state with atomic os.replace, pytest, and dataclasses.
 
@@ -1310,7 +1310,7 @@ def test_admin_test_command_uses_service_and_returns_summary() -> None:
     assert "成功 2" in result[0]
 ~~~
 
-Also test latest with an injected client returning release 26.3 and snapshot 26w14a, asserting both lines are present. Test _send_text with a FakeContext that records session and chain, asserting the chain contains a Plain with text hello.
+Also test latest with an injected client returning release 26.3 and snapshot 26w14a, asserting both lines are present. Test _send_text with a FakeContext that records session and chain, asserting the MessageChain contains a Plain with text hello.
 
 Create tests/test_lifecycle.py:
 
@@ -1410,7 +1410,7 @@ The MinecraftVersionWatcherPlugin must:
 1. Insert its directory into sys.path only when loaded as a top-level file, matching the sibling plugin pattern.
 2. Import the pure modules with relative imports when __package__ is set and top-level imports otherwise.
 3. Call super().__init__(context), normalize config or {}, get the data directory with StarTools.get_data_dir(PLUGIN_NAME), load state.json, create MojangManifestClient, and create VersionWatcherService with self._send_text and a state-save lambda.
-4. Define async _send_text(umo, text) as bool(await self.context.send_message(umo, [Plain(text)])).
+4. Define async _send_text(umo, text) as bool(await self.context.send_message(umo, MessageChain([Plain(text)]))).
 5. Define initialize() to create exactly one asyncio.create_task(self._poll_loop()) when no live task exists.
 6. Define _poll_loop() to skip network checks when no type is enabled, otherwise call service.check_once() immediately, catch ordinary exceptions with a warning, and then wait check_interval_minutes times 60 seconds. Re-raise asyncio.CancelledError.
 7. Define terminate() to cancel the task, await it, suppress asyncio.CancelledError, and clear the task field.

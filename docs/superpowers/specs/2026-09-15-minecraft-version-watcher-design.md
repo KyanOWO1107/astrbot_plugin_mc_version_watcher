@@ -58,7 +58,7 @@ The classifier supports both forms used by official identifiers, such as `1.21.1
 
 `/mcversion umo` returns `event.unified_msg_origin` exactly as the current session's UMO, so it can be copied into `push_umos`.
 
-`/mcversion test` is restricted to AstrBot administrators. It creates a synthetic version object, formats it through the same formatter used for real updates, and sends the resulting message through the same `context.send_message(umo, [Plain(...)])` path to every configured UMO. The synthetic version is visibly marked as a test message, does not call Mojang, and does not modify the version state. The command's invoking session receives a summary of successful and failed target sends. With no configured targets, it reports that no push target is configured.
+`/mcversion test` is restricted to AstrBot administrators. It creates a synthetic version object, formats it through the same formatter used for real updates, and sends the resulting message through the same `context.send_message(umo, MessageChain([Plain(...)]))` path to every configured UMO. The synthetic version is visibly marked as a test message, does not call Mojang, and does not modify the version state. The command's invoking session receives a summary of successful and failed target sends. With no configured targets, it reports that no push target is configured.
 
 An invocation without a recognized subcommand returns concise usage text. Query commands are available to non-administrators; only the test push is privileged.
 
