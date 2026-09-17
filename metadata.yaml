@@ -1,5 +1,6 @@
 name: astrbot_plugin_mc_version_watcher
 display_name: Minecraft Version Watcher
 desc: 定时监测 Minecraft 官方版本更新，并向配置的私聊或群聊推送。
-version: v0.1.1
+version: v0.1.2
 author: Kyan
+repo: https://github.com/KyanOWO1107/astrbot_plugin_mc_version_watcher

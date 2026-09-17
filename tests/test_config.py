@@ -11,8 +11,12 @@ def test_plugin_metadata_declares_expected_identity() -> None:
     metadata = (ROOT / "metadata.yaml").read_text(encoding="utf-8")
     main_source = (ROOT / "main.py").read_text(encoding="utf-8")
     assert "name: astrbot_plugin_mc_version_watcher" in metadata
-    assert "version: v0.1.1" in metadata
-    assert '"0.1.1",' in main_source
+    assert "version: v0.1.2" in metadata
+    assert '"0.1.2",' in main_source
+    assert (
+        "repo: https://github.com/KyanOWO1107/astrbot_plugin_mc_version_watcher"
+        in metadata
+    )
 
 
 def test_configuration_schema_declares_defaults_and_list_options() -> None:
