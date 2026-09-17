@@ -79,7 +79,7 @@ def normalize_plugin_config(config: Mapping[str, Any]) -> PluginSettings:
     "astrbot_plugin_mc_version_watcher",
     "Kyan",
     "Minecraft 版本监测",
-    "0.1.0",
+    "0.1.1",
 )
 class MinecraftVersionWatcherPlugin(Star):
     def __init__(self, context: Context, config: Mapping[str, Any] | None = None):

@@ -9,8 +9,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_plugin_metadata_declares_expected_identity() -> None:
     metadata = (ROOT / "metadata.yaml").read_text(encoding="utf-8")
+    main_source = (ROOT / "main.py").read_text(encoding="utf-8")
     assert "name: astrbot_plugin_mc_version_watcher" in metadata
-    assert "version: v0.1.0" in metadata
+    assert "version: v0.1.1" in metadata
+    assert '"0.1.1",' in main_source
 
 
 def test_configuration_schema_declares_defaults_and_list_options() -> None:
