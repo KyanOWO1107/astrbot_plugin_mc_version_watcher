@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
-import logging
+
+from astrbot.api import logger
 
 from .client import ManifestClient
 from .formatters import format_test_update, format_update_message
@@ -50,7 +51,6 @@ class VersionWatcherService:
         push_umos: Sequence[str],
         send_text: SendText,
         save_state: SaveState,
-        logger: logging.Logger | None = None,
     ) -> None:
         self.client = client
         self.state = state
@@ -58,7 +58,6 @@ class VersionWatcherService:
         self.push_umos = tuple(push_umos)
         self.send_text = send_text
         self.save_state = save_state
-        self.logger = logger or logging.getLogger(__name__)
 
     async def check_once(self) -> CheckResult:
         manifest = await self.client.fetch_manifest()
@@ -111,7 +110,7 @@ class VersionWatcherService:
                 if not accepted:
                     raise RuntimeError("平台未接受消息")
             except Exception as exc:
-                self.logger.warning(
+                logger.warning(
                     "Minecraft version push failed for %s: %s",
                     target,
                     exc,

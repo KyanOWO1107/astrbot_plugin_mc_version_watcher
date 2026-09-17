@@ -2,10 +2,26 @@ from __future__ import annotations
 
 import asyncio
 from copy import deepcopy
+from pathlib import Path
+
+from astrbot.api import logger as astrbot_logger
 
 from mc_version_watcher.models import VersionInfo, VersionManifest
 from mc_version_watcher.service import VersionWatcherService
 from mc_version_watcher.state import WatchState
+
+
+def test_service_uses_only_astrbot_api_logger() -> None:
+    service_source = (
+        Path(__file__).resolve().parents[1] / "mc_version_watcher" / "service.py"
+    ).read_text(encoding="utf-8")
+
+    from mc_version_watcher import service
+
+    assert "from astrbot.api import logger" in service_source
+    assert "import logging" not in service_source
+    assert "logging.getLogger" not in service_source
+    assert service.logger is astrbot_logger
 
 
 class FakeClient:
